@@ -8,11 +8,11 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use: 	"pdocker",
-	Short:	"Proot Docker CLi",
-	Long:	"PRoot based Docker Client",
+	Short:	"PDocker - PRoot based docker client",
 }
 
 func Execute() {
+	rootCmd.Version = "1.0.1"
 	if err := rootCmd.Execute(); err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

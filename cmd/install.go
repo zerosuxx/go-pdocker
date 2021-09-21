@@ -19,10 +19,6 @@ var installCmd = &cobra.Command{
 }
 
 func runInstall(_ *cobra.Command, _ []string) error {
-	if os.Getuid() != 0 {
-		return errors.New("installation process are not allowed, please run command with sudo instead")
-	}
-
 	err := os.MkdirAll(GetAppPath(), 711)
 	if err != nil {
 		return err
