@@ -18,12 +18,12 @@ var installCmd = &cobra.Command{
 }
 
 func runInstall(_ *cobra.Command, _ []string) error {
-	err := os.MkdirAll(GetAppPath(), 711)
+	err := os.MkdirAll(GetAppPath(), os.ModePerm)
 	if err != nil {
 		return err
 	}
 
-	err = os.MkdirAll(frozenImagesPath, 700)
+	err = os.MkdirAll(frozenImagesPath, os.ModePerm)
 	if err != nil {
 		return err
 	}
