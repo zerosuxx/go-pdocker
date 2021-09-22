@@ -12,7 +12,7 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
-	rootCmd.Version = "1.0.2"
+	rootCmd.Version = "1.0.3"
 	if err := rootCmd.Execute(); err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
