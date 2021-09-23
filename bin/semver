@@ -1,5 +1,5 @@
 #!/bin/bash
-# version 0.3.0
+# version 0.3.1
 
 function generate_new_version() {
   first_line=$1
@@ -22,7 +22,8 @@ function generate_new_version() {
 }
 
 commit_hash=$(git rev-list --tags --max-count=1)
-current_version=$(git describe --tags "$commit_hash")
+current_version_tag=$(git describe --tags "$commit_hash")
+current_version=$current_version_tag
 
 if [[ "$current_version" != "" ]]; then
   commits=$(git log --reverse --pretty=format:'%H' "$current_version"..HEAD)
@@ -48,10 +49,13 @@ if [[ "$commits" != "" ]]; then
       fi
       current_version=$new_version
     done <<< "$commits"
+    if [[ "$new_version" == "$current_version_tag" ]]; then
+      new_version=$(git describe --tags)
+    fi
 else
-  new_version=$current_version
+  new_version=$(git describe --tags)
 fi
 
 if [[ "$SHOW_HISTORY" != "1" ]]; then
-  echo -n $new_version
+  echo -n "$new_version"
 fi
