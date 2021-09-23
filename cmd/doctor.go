@@ -69,3 +69,9 @@ func printRequirementResult(errorText string, output []byte, err error, transfor
 		fmt.Println(fmt.Sprintf("[X] " + successText))
 	}
 }
+
+func CheckImagePullScriptExists() bool {
+	_, imagePullScriptError := os.Stat(imagePullScriptPath)
+
+	return imagePullScriptError == nil
+}
