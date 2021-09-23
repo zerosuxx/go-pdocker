@@ -13,10 +13,11 @@ import (
 )
 
 var runCmd = &cobra.Command{
-	Use:   "run IMAGE [COMMAND] [ARG...]",
-	Short: "Run a command in a new container",
-	Args:  cobra.MinimumNArgs(1),
-	RunE:  runHandler,
+	Use:                "run IMAGE [COMMAND] [ARG...]",
+	Short:              "Run a command in a new container",
+	Args:               cobra.MinimumNArgs(1),
+	RunE:               runHandler,
+	DisableFlagParsing: true,
 }
 
 func runHandler(c *cobra.Command, args []string) error {
