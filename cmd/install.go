@@ -7,17 +7,18 @@ import (
 	"os"
 )
 
+var containersPath = GetAppPath() + "/containers"
 var frozenImagesPath = GetAppPath() + "/frozen-images"
 var imagePullScriptPath = GetAppPath() + "/pull.sh"
 var frozenImageDownloaderUrl = "https://raw.githubusercontent.com/moby/moby/master/contrib/download-frozen-image-v2.sh"
 
 var installCmd = &cobra.Command{
-	Use:   	"install",
-	Short: 	"Install application files",
-	RunE: 	runInstall,
+	Use:   "install",
+	Short: "Install application files",
+	RunE:  installHandler,
 }
 
-func runInstall(_ *cobra.Command, _ []string) error {
+func installHandler(_ *cobra.Command, _ []string) error {
 	err := os.MkdirAll(GetAppPath(), os.ModePerm)
 	if err != nil {
 		return err
@@ -33,7 +34,7 @@ func runInstall(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	fmt.Println("installation completed")
+	fmt.Println("installation completed.")
 
 	return nil
 }
