@@ -57,6 +57,9 @@ func ExtractTarArchive(r io.Reader, targetPath string) error {
 			_ = f.Close()
 
 		case typeSymLink:
+			if IsFileExists(target) {
+				_ = os.Remove(target)
+			}
 			err := os.Symlink(filepath.Join(targetPath, header.Linkname), target)
 			if err != nil {
 				return err
