@@ -11,8 +11,7 @@ build-all: ## Build application for supported architectures
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-X '${repository}/cmd.Version=${new_version}'" -o build/${BINARY_NAME}-${new_version}-linux-aarch64 ${BINARY_NAME}.go
 
 install: ## Install the binary
-	go get -d ./...
-	go get -u golang.org/x/lint/golint
+	go install
 
 lint: ## Check lint errors
 	golint -set_exit_status=1 -min_confidence=1.1 ./...
