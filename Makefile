@@ -9,6 +9,8 @@ build: ## Build the application
 	CGO_ENABLED=0 go build -ldflags="-X '${repository}/cmd.Version=${new_version}'" -o build/pdocker pdocker.go
 
 build-all: ## Build application for supported architectures
+	@echo "repository: ${repository}"
+	@echo "new version: ${new_version}"
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-X '${repository}/cmd.Version=${new_version}'" -o build/${BINARY_NAME}-${new_version}-linux-x86_64 ${BINARY_NAME}.go
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-X '${repository}/cmd.Version=${new_version}'" -o build/${BINARY_NAME}-${new_version}-linux-aarch64 ${BINARY_NAME}.go
 
