@@ -1,0 +1,57 @@
+#!/bin/bash
+# version 0.3.0
+
+function generate_new_version() {
+  first_line=$1
+  last_line=$2
+  current_version=$3
+
+  IFS='.' read -ra version_parts <<< "$current_version"
+  if [[ $first_line == 'fix!'* ]] || [[ $first_line == 'feat!'* ]] || [[ $last_line == 'BREAKING CHANGE:'* ]]; then
+  	(( version_parts[0]++ )) # Major
+  	version_parts[1]=0
+  	version_parts[2]=0
+  elif [[ $first_line == feat* ]]; then
+  	(( version_parts[1]++ )) # Minor
+  	version_parts[2]=0
+  elif [[ $first_line == fix* ]]; then
+  	(( version_parts[2]++ )) # Patch
+  fi
+
+  export new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
+}
+
+commit_hash=$(git rev-list --tags --max-count=1)
+current_version=$(git describe --tags "$commit_hash")
+
+if [[ "$current_version" != "" ]]; then
+  commits=$(git log --reverse --pretty=format:'%H' "$current_version"..HEAD)
+else
+  current_version="1.0.0"
+  commits=$(git log --reverse --pretty=format:'%H')
+fi
+
+if [[ "$commits" != "" ]]; then
+    while IFS= read -r commit_id
+    do
+      revision=$(git rev-list --format="%B" --max-count=1 "$commit_id")
+      first_line=$(echo "$revision" | tail -n +2 | head -n 1)
+      last_line=$(echo "$revision" | tail -n1)
+      generate_new_version "$first_line" "$last_line" "$current_version"
+
+      if [[ "$SHOW_HISTORY" == "1" ]]; then
+        echo -n "$first_line | "
+        if [[ "$first_line" != "$last_line" ]]; then
+          echo -n "$last_line | "
+        fi
+        echo "$new_version"
+      fi
+      current_version=$new_version
+    done <<< "$commits"
+else
+  new_version=$current_version
+fi
+
+if [[ "$SHOW_HISTORY" != "1" ]]; then
+  echo -n $new_version
+fi
