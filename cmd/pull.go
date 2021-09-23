@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/zerosuxx/go-pdocker/pkg"
 	"os"
 	"os/exec"
 	"strings"
@@ -12,25 +14,25 @@ var pullCmd = &cobra.Command{
 	Use:   "pull NAME[:TAG|@DIGEST]",
 	Short: "Pull an image from a registry",
 	Args:  cobra.MinimumNArgs(1),
-	RunE:  runPull,
+	RunE:  pullHandler,
 }
 
-func runPull(_ *cobra.Command, args []string) error {
-	if !CheckImagePullScriptExists() {
+func pullHandler(_ *cobra.Command, args []string) error {
+	if !pkg.IsFileExists(imagePullScriptPath) {
 		return errors.New("image pull script not installed, run `install` command first")
 	}
 
-	imageName := args[0]
-	if !strings.Contains(imageName, ":") {
-		imageName += ":latest"
-	}
+	imageName := GetImageName(args[0])
+	imageFolder := GetImageFolder(imageName)
 
-	frozenImagePath := frozenImagesPath + "/" + strings.Replace(imageName, ":", "/", 1)
+	frozenImagePath := frozenImagesPath + "/" + imageFolder
 	cmd := exec.Command("bash", imagePullScriptPath, frozenImagePath, imageName)
-	err := runCommand(cmd)
+	err := pkg.RunCommand(cmd, os.Stdin, OutputFilter(os.Stdout), OutputFilter(os.Stderr))
 	if err != nil {
 		return err
 	}
+
+	fmt.Println(imageName + " downloaded.")
 
 	return nil
 }
@@ -39,16 +41,8 @@ func init() {
 	rootCmd.AddCommand(pullCmd)
 }
 
-func runCommand(cmd *exec.Cmd) error {
-	cmd.Stdout = OutputFilter(os.Stdout)
-	cmd.Stderr = OutputFilter(os.Stderr)
-	err := cmd.Run()
-	if err != nil {
-		return err
-	}
-	_ = cmd.Wait()
-
-	return nil
+type ManifestResponse struct {
+	Layers []string
 }
 
 type ProxyWriter struct {
@@ -72,4 +66,15 @@ func (w *ProxyWriter) Write(p []byte) (int, error) {
 	}
 
 	return w.file.Write(p)
+}
+
+func GetImageName(imageName string) string {
+	if !strings.Contains(imageName, ":") {
+		imageName += ":latest"
+	}
+	return imageName
+}
+
+func GetImageFolder(imageName string) string {
+	return strings.Replace(imageName, ":", "/", 1)
 }

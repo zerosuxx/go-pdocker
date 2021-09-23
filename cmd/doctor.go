@@ -11,10 +11,10 @@ import (
 var doctorCmd = &cobra.Command{
 	Use:   "doctor",
 	Short: "Check system requirements",
-	Run:   runDoctor,
+	Run:   doctorHandler,
 }
 
-func runDoctor(_ *cobra.Command, _ []string) {
+func doctorHandler(_ *cobra.Command, _ []string) {
 	prootCommand := exec.Command("proot", "--help")
 	prootOutput, prootError := prootCommand.Output()
 	printRequirementResult("proot is not installed (See: https://proot-me.github.io)", prootOutput, prootError, func(output string) string {
@@ -68,10 +68,4 @@ func printRequirementResult(errorText string, output []byte, err error, transfor
 		successText := transformer(string(output))
 		fmt.Println(fmt.Sprintf("[X] " + successText))
 	}
-}
-
-func CheckImagePullScriptExists() bool {
-	_, imagePullScriptError := os.Stat(imagePullScriptPath)
-
-	return imagePullScriptError == nil
 }
