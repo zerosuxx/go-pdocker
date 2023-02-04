@@ -9,8 +9,8 @@ import (
 
 var containersPath = GetAppPath() + "/containers"
 var frozenImagesPath = GetAppPath() + "/frozen-images"
-var imagePullScriptPath = GetAppPath() + "/pull.sh"
-var frozenImageDownloaderUrl = "https://raw.githubusercontent.com/moby/moby/master/contrib/download-frozen-image-v2.sh"
+var imagePullScriptPath = GetAppPath() + "/download-frozen-image-v2.sh"
+var frozenImageDownloaderUrl = "https://raw.githubusercontent.com/zerosuxx/moby/master/contrib/download-frozen-image-v2.sh"
 
 var installCmd = &cobra.Command{
 	Use:   "install",
